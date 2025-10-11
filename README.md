@@ -2,7 +2,20 @@
 
 Viewmodel is a tool to easily apply values to html templates using go structs.
 
-**example**
+## Example 
+
+For instance a nested index which can show an error popup and a subpage.
+
+### Screen declarations 
+
+You need to declare your screen, this you can do in its own module
+
+#### index module
+
+contains 2 files:
+
+- index.go
+- index.html
 
 ```html
 {{ define "index" }}
@@ -98,6 +111,13 @@ func Default(title string, err *Error, inner viewmodel.VM) viewmodel.Root {
 }
 ```
 
+#### mainscreen module
+
+contains 2 files:
+
+- mainscreen.go
+- mainscreen.html
+
 ```html
 {{ define "body" }}
 <div class="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -168,3 +188,34 @@ func New(postUrl string) viewmodel.VM {
 }
 ```
 
+### Usage
+
+```go
+func rootEndPoint() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		session, ok := r.Context().Value("session").(*server.Session)
+		if !ok {
+			index.Default(
+				"Error",
+				&server.Error{
+					Title:   "Missing Session",
+					Message: "try to allow cookies if you are blocking it.",
+				},
+				mainscreen.New("phone"),
+			).Execute(w)
+			return
+		}
+
+		if session.PhoneNumber == "" || session.OTP == nil {
+			index.Default(
+				"Welcome",
+				nil,
+				mainscreen.New("phone"),
+			).Execute(w)
+			return
+		}
+
+		http.Redirect(w, r, "code", http.StatusFound)
+	}
+}
+```
