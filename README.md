@@ -38,37 +38,41 @@ contains 2 files:
 {{ end }}
 
 {{ define "alert" }}
-<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-  <div class="mx-4 w-full max-w-lg rounded-xl bg-gray-800 p-6 shadow-xl">
+<div class="alert-container">
+  <div class="alert-box">
     <div class="flex items-start space-x-4">
-      <div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-500/10">
-	<svg 
-	  viewBox="0 0 24 24" 
-	  fill="none" 
-	  stroke="currentColor" 
-	  stroke-width="1.5" 
-	  aria-hidden="true" 
-	  class="size-6 text-red-400"
-	> 
-	  <path 
-	    d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" 
-	    stroke-linecap="round" 
-	    stroke-linejoin="round" 
-	  /> 
-	</svg>
+      <div class="alert-icon">
+        {{ template "alert-icon" . }}
       </div>
       <div>
-        <h3 class="text-base font-semibold text-white">{{ .Error.Title }}</h3>
-        <p class="mt-2 text-sm text-gray-400">{{ .Error.Message }}</p>
+        <h3 class="alert-title">{{ .Error.Title }}</h3>
+        <p class="alert-message">{{ .Error.Message }}</p>
       </div>
     </div>
     <div class="mt-6 flex justify-end">
-      <a href="#" class="rounded-md bg-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20">
-        Ok
-      </a>
+      <a href="#" class="alert-btn">Ok</a>
     </div>
   </div>
 </div>
+{{ end }}
+
+{{ define "alert-icon" }}
+<svg 
+  viewBox="0 0 24 24" 
+  fill="none" 
+  stroke="currentColor" 
+  stroke-width="1.5" 
+  aria-hidden="true" 
+  class="size-6 text-red-400"
+> 
+  <path 
+    d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 
+       0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 
+       0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" 
+    stroke-linecap="round" 
+    stroke-linejoin="round" 
+  /> 
+</svg>
 {{ end }}
 ```
 
@@ -120,18 +124,9 @@ contains 2 files:
 
 ```html
 {{ define "body" }}
-<div class="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
-  <form 
-    action="{{ .Values.PostURL }}"
-    method="POST"
-    class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg w-full max-w-sm flex flex-col gap-4"
-  >
-    <label 
-      for="phone-number" 
-      class="sr-only"
-    >
-      Email address
-    </label>
+<div class="page-center">
+  <form action="{{ .Values.PostURL }}" method="POST" class="form-card">
+    <label for="phone-number" class="sr-only">Telegram number</label>
 
     <input 
       id="phone-number"
@@ -140,24 +135,10 @@ contains 2 files:
       required
       placeholder="Enter your telegram number"
       autocomplete="tel"
-      class="min-w-0 flex-auto rounded-md 
-             bg-gray-100 dark:bg-white/5
-             px-3.5 py-2 text-base 
-             text-gray-900 dark:text-white
-             outline-1 -outline-offset-1 outline-gray-300 dark:outline-white/20
-             placeholder:text-gray-500 dark:placeholder:text-gray-400
-             focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+      class="form-input"
     />
-    <button 
-      type="submit"
-      class="flex items-center justify-center gap-2 rounded-md
-	     bg-gray-200 hover:bg-gray-300 
-             dark:bg-gray-700 dark:hover:bg-gray-600
-             px-3.5 py-2.5 text-sm font-semibold 
-             text-gray-900 dark:text-white 
-             focus-visible:outline-2 focus-visible:outline-offset-2 
-             focus-visible:outline-indigo-500"
-    >
+
+    <button type="submit" class="form-button">
       Continue
     </button>
   </form>
