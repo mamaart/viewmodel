@@ -1,9 +1,11 @@
 package viewmodel
 
 import (
+	"bytes"
 	"html/template"
 	"io/fs"
 	"net/http"
+	"strings"
 )
 
 type VM interface {
@@ -45,7 +47,19 @@ func (raw *raw) Execute(w http.ResponseWriter) {
 		panic(err)
 	}
 
-	if err := templ.Execute(w, &raw.inner); err != nil {
+	var buf bytes.Buffer
+	if err := templ.Execute(&buf, &raw.inner); err != nil {
 		panic(err)
 	}
+
+	// Minify and write to ResponseWriter
+	w.Header().Set("Content-Type", "text/html")
+	w.Write([]byte(simpleMinify(buf.String())))
+}
+
+func simpleMinify(html string) string {
+	html = strings.ReplaceAll(html, "\n", "")
+	html = strings.ReplaceAll(html, "\t", "")
+	html = strings.Join(strings.Fields(html), " ")
+	return html
 }
