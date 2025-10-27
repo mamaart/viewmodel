@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"html/template"
 	"io/fs"
+	"log"
 	"net/http"
-	"strings"
 )
 
 type VM interface {
@@ -52,14 +52,9 @@ func (raw *raw) Execute(w http.ResponseWriter) {
 		panic(err)
 	}
 
-	// Minify and write to ResponseWriter
 	w.Header().Set("Content-Type", "text/html")
-	w.Write([]byte(simpleMinify(buf.String())))
-}
-
-func simpleMinify(html string) string {
-	html = strings.ReplaceAll(html, "\n", "")
-	html = strings.ReplaceAll(html, "\t", "")
-	html = strings.Join(strings.Fields(html), " ")
-	return html
+	if err := minifyHTML(w, &buf); err != nil {
+		log.Println("HTML minify error:", err)
+		w.Write(buf.Bytes()) // fallback
+	}
 }
